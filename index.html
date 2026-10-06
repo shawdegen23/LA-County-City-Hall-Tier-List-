@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>LA County City Hall Tier List</title>
+<meta name="description" content="Rank the city halls of all 88 cities in Los Angeles County from S to F.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: civic bulletin board. Deal desk (one city hall at a time) → tier board → docket of unranked city halls. */
+:root{
+  --bg:#e9edf0; --panel:#f8fafb; --ink:#14202b; --muted:#5a6876; --line:#c9d2da;
+  --gold:#d99a1e; --gold-ink:#3a2700; --desk:#1d3a57; --desk-ink:#ffffff;
+  --chip:#ffffff; --chip-line:#cdd6de; --sel:#1d6fd1; --ph:#d5dde4;
+  --tS:#e2574c; --tA:#ef8f3b; --tB:#eec744; --tC:#86c35a; --tD:#55a7d6; --tF:#9a87d0;
+  --tier-ink:#1a1306;
+  --display:"Big Shoulders Display","Arial Narrow",Impact,sans-serif;
+  --body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --tile:92px;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root{
+  --bg:#0f161d; --panel:#16212b; --ink:#e6edf3; --muted:#93a3b3; --line:#2a3947;
+  --gold:#e6ab35; --gold-ink:#241800; --desk:#1f3d5c; --desk-ink:#ffffff;
+  --chip:#1d2a36; --chip-line:#324454; --sel:#5aa2f5; --ph:#26384a;
+  --tS:#d9584e; --tA:#e58c3d; --tB:#dcb941; --tC:#7db55a; --tD:#4f9bc8; --tF:#8d7cc4;
+  color-scheme:dark;
+}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.45;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+.wrap{max-width:1180px;margin:0 auto;padding-inline:16px;padding-block:20px 48px;display:flex;flex-direction:column;gap:20px}
+a{color:inherit}
+
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 24px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+h1{font-family:var(--display);font-weight:900;font-size:clamp(36px,7vw,64px);line-height:.92;margin:4px 0 0;text-transform:uppercase;text-wrap:balance}
+h1 em{font-style:normal;color:var(--gold)}
+.progress{min-width:220px;flex:0 1 300px;display:flex;flex-direction:column;gap:6px}
+.progress .nums{display:flex;justify-content:space-between;align-items:baseline;font-family:var(--mono);font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.progress .nums b{color:var(--ink);font-size:22px;font-family:var(--display);font-weight:800}
+.bar{height:8px;border-radius:4px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--gold);transition:width .3s ease}
+
+/* Deal desk */
+.desk{background:var(--desk);color:var(--desk-ink);border-radius:14px;padding:16px;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:16px 22px;align-items:center}
+.desk-photo{width:220px;aspect-ratio:4/3;border-radius:10px;overflow:hidden;background:rgba(255,255,255,.08);position:relative;max-width:100%}
+.desk-photo img{width:100%;height:100%;object-fit:cover;display:block}
+.desk .lbl{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;opacity:.75}
+.desk .city{font-family:var(--display);font-weight:900;text-transform:uppercase;font-size:clamp(32px,5.4vw,52px);line-height:.95;margin:4px 0 8px;overflow-wrap:anywhere}
+.desk .meta{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;font-size:13px}
+.desk .meta a{text-underline-offset:3px}
+.flag{display:inline-block;font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:2px 6px;border-radius:4px;background:rgba(255,255,255,.18)}
+.pick{display:grid;grid-template-columns:repeat(3,56px);gap:6px}
+.pick button{height:52px;border:0;border-radius:8px;font-family:var(--display);font-weight:900;font-size:26px;color:var(--tier-ink);cursor:pointer;transition:transform .12s}
+.pick button:hover{transform:translateY(-2px)}
+.pick .skip{grid-column:1/-1;height:34px;font-family:var(--body);font-size:13px;font-weight:600;background:transparent;color:inherit;border:1px solid currentColor;opacity:.85}
+.desk.done{grid-template-columns:minmax(0,1fr)}
+.desk.done .desk-photo,.desk.done .pick{display:none}
+@media (max-width:820px){.desk{grid-template-columns:auto minmax(0,1fr)}.pick{grid-column:1/-1;grid-template-columns:repeat(6,minmax(0,1fr))}}
+@media (max-width:520px){.desk{grid-template-columns:minmax(0,1fr)}.desk-photo{width:100%}}
+
+/* Board */
+.board{border-radius:12px;overflow:hidden;border:1px solid var(--line);background:var(--panel)}
+.row{display:grid;grid-template-columns:80px minmax(0,1fr);border-top:1px solid var(--line)}
+.row:first-child{border-top:0}
+.tag{display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:900;font-size:40px;color:var(--tier-ink);user-select:none;cursor:pointer}
+.zone{display:flex;flex-wrap:wrap;gap:6px;padding:6px;align-content:flex-start;min-height:calc(var(--tile) + 12px);transition:background .15s}
+.armed .zone,.armed .tag{cursor:copy}
+.armed .zone:hover{background:color-mix(in srgb,var(--sel) 10%,transparent)}
+@media (max-width:520px){:root{--tile:76px}.row{grid-template-columns:52px minmax(0,1fr)}.tag{font-size:30px}}
+
+/* Tiles */
+.card{position:relative;width:var(--tile);height:var(--tile);border-radius:8px;overflow:hidden;background:var(--ph);border:1px solid var(--chip-line);cursor:grab;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;flex:none}
+.card img{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
+.card .nm{position:absolute;inset:auto 0 0 0;padding:14px 5px 4px;font-size:11px;font-weight:600;line-height:1.1;color:#fff;background:linear-gradient(to top,rgba(0,0,0,.82),rgba(0,0,0,0));text-shadow:0 1px 2px rgba(0,0,0,.5)}
+.card .cv{position:absolute;top:4px;left:4px;font-family:var(--mono);font-size:8.5px;letter-spacing:.06em;text-transform:uppercase;background:rgba(0,0,0,.6);color:#fff;padding:1px 4px;border-radius:3px}
+.card .ini{position:absolute;inset:0 0 22px 0;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:900;font-size:32px;color:var(--muted)}
+.card.sel{outline:3px solid var(--sel);outline-offset:1px}
+.card:focus-visible,button:focus-visible,a:focus-visible,.tag:focus-visible{outline:3px solid var(--sel);outline-offset:2px}
+.sortable-ghost{opacity:.35}
+.sortable-chosen{box-shadow:0 10px 24px rgba(0,0,0,.3)}
+.sortable-drag{transform:rotate(-2deg)}
+
+/* Docket */
+.docket{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:12px}
+.dhead{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px}
+.dhead h2{font-family:var(--display);font-weight:800;font-size:26px;text-transform:uppercase;margin:0}
+.dhead h2 span{font-family:var(--mono);font-size:13px;color:var(--muted);font-weight:500;margin-left:6px}
+.filters{display:flex;flex-wrap:wrap;gap:6px}
+.filters button{border:1px solid var(--chip-line);background:var(--chip);color:var(--ink);border-radius:999px;padding:4px 10px;font:500 12px var(--body);cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.filters button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.filters .dot{width:8px;height:8px;border-radius:50%}
+#pool{padding:0;min-height:calc(var(--tile) + 12px)}
+.hint{font-size:13px;color:var(--muted);margin:0}
+.empty{font-size:13px;color:var(--muted);padding:8px}
+
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.btn{border:1px solid var(--chip-line);background:var(--chip);color:var(--ink);border-radius:8px;padding:9px 14px;font:600 13px var(--body);cursor:pointer}
+.btn.primary{background:var(--gold);border-color:var(--gold);color:var(--gold-ink)}
+.btn.danger{color:var(--tS);border-color:var(--tS)}
+.confirm{display:inline-flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:13px}
+.toast{font-size:13px;color:var(--muted)}
+textarea.copyout{width:100%;min-height:140px;font:12px var(--mono);background:var(--chip);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:10px}
+footer{font-size:12px;color:var(--muted);display:flex;flex-direction:column;gap:8px}
+details summary{cursor:pointer}
+.credits{columns:2 260px;column-gap:24px;margin:8px 0 0;padding:0;list-style:none}
+.credits li{break-inside:avoid;margin-bottom:4px}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <div class="eyebrow">88 incorporated cities · one county</div>
+      <h1>LA County <em>City Hall</em> Tier List</h1>
+    </div>
+    <div class="progress" aria-live="polite">
+      <div class="nums"><span><b id="rankedN">0</b> / 88 ranked</span><span id="pct">0%</span></div>
+      <div class="bar"><i id="barFill"></i></div>
+    </div>
+  </header>
+
+  <section class="desk" id="desk" aria-label="Next city hall">
+    <div class="desk-photo"><img id="dealImg" alt="" onerror="this.removeAttribute('src')"></div>
+    <div>
+      <div class="lbl">Now judging</div>
+      <div class="city" id="dealCity">—</div>
+      <div class="meta" id="dealMeta"></div>
+    </div>
+    <div class="pick" id="pick"></div>
+  </section>
+
+  <section class="board" id="board" aria-label="Tier board"></section>
+
+  <section class="docket">
+    <div class="dhead">
+      <h2>Unranked <span id="poolN">88</span></h2>
+      <div class="filters" id="filters"></div>
+    </div>
+    <p class="hint">Drag a city hall onto a tier. On a phone, press and hold a tile for a moment, then drag. You can also tap a tile, then tap a tier.</p>
+    <div class="zone" id="pool" data-zone="pool"></div>
+  </section>
+
+  <div class="toolbar">
+    <button class="btn primary" id="copyBtn" type="button">Copy my tier list</button>
+    <button class="btn" id="shuffleBtn" type="button">Deal a different city</button>
+    <span id="resetWrap"></span>
+    <span class="toast" id="toast" role="status"></span>
+  </div>
+  <textarea class="copyout" id="copyOut" hidden readonly aria-label="Your tier list as text"></textarea>
+
+  <footer>
+    <span>Rankings save in this browser. Tiles marked “City view” show the city because no free photo of its city hall was available; use “Find city hall photos” on the deal card to see the building.</span>
+    <details><summary>Photo credits (Wikimedia Commons)</summary><ul class="credits" id="credits"></ul></details>
+  </footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.2/Sortable.min.js"></script>
+<script src="photos.js"></script>
+<script>
+const TIERS=["S","A","B","C","D","F"];
+const REGIONS={
+  "San Gabriel Valley":"#c0763a","Gateway Cities":"#3f8f7a","South Bay":"#2f78b7","Westside":"#b44a7a",
+  "Valley & Verdugos":"#7a6bb8","Santa Monica Mtns":"#5f8d3a","North County":"#a88a1f","City of LA":"#d0453a","Catalina":"#1aa0b5"
+};
+const R={
+  "San Gabriel Valley":"Alhambra,Arcadia,Azusa,Baldwin Park,Bradbury,Claremont,Covina,Diamond Bar,Duarte,El Monte,Glendora,Industry,Irwindale,La Puente,La Verne,Monrovia,Monterey Park,Pasadena,Pomona,Rosemead,San Dimas,San Gabriel,San Marino,Sierra Madre,South El Monte,South Pasadena,Temple City,Walnut,West Covina",
+  "Gateway Cities":"Artesia,Bell,Bell Gardens,Bellflower,Cerritos,Commerce,Compton,Cudahy,Downey,Hawaiian Gardens,Huntington Park,La Habra Heights,La Mirada,Lakewood,Long Beach,Lynwood,Maywood,Montebello,Norwalk,Paramount,Pico Rivera,Santa Fe Springs,Signal Hill,South Gate,Vernon,Whittier",
+  "South Bay":"Carson,El Segundo,Gardena,Hawthorne,Hermosa Beach,Inglewood,Lawndale,Lomita,Manhattan Beach,Palos Verdes Estates,Rancho Palos Verdes,Redondo Beach,Rolling Hills,Rolling Hills Estates,Torrance",
+  "Westside":"Beverly Hills,Culver City,Santa Monica,West Hollywood",
+  "Valley & Verdugos":"Burbank,Glendale,La Cañada Flintridge,San Fernando",
+  "Santa Monica Mtns":"Agoura Hills,Calabasas,Hidden Hills,Malibu,Westlake Village",
+  "North County":"Lancaster,Palmdale,Santa Clarita",
+  "City of LA":"Los Angeles",
+  "Catalina":"Avalon"
+};
+const PHOTOS=window.PHOTOS||{};
+const CITIES={};
+for(const [reg,list] of Object.entries(R)) for(const n of list.split(",")) CITIES[n]=reg;
+const ALL=Object.keys(CITIES).sort((a,b)=>a.localeCompare(b));
+const KEY="lac-cityhall-tiers-v3";
+let state=null, selected=null, filter="All", dragging=false, lastDrag=0;
+
+const fresh=()=>{const t={};TIERS.forEach(k=>t[k]=[]);return {tiers:t,pool:[...ALL],deal:null}};
+function valid(s){try{const seen=new Set();for(const k of TIERS)for(const n of s.tiers[k])seen.add(n);for(const n of s.pool)seen.add(n);return seen.size===ALL.length&&ALL.every(n=>seen.has(n))}catch(e){return false}}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}};
+function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&valid(s))return s}catch(e){}return null}
+const where=n=>state.pool.includes(n)?"pool":TIERS.find(k=>state.tiers[k].includes(n));
+const listOf=z=>z==="pool"?state.pool:state.tiers[z];
+const searchURL=n=>"https://www.google.com/search?tbm=isch&q="+encodeURIComponent(n+" City Hall California");
+const initials=n=>n.split(/\s+/).map(w=>w[0]).join("").slice(0,3).toUpperCase();
+
+function move(n,to,before){
+  const a=listOf(where(n)); a.splice(a.indexOf(n),1);
+  const b=listOf(to); const i=before?b.indexOf(before):-1;
+  if(i<0)b.push(n); else b.splice(i,0,n);
+  if(to==="pool") b.sort((x,y)=>x.localeCompare(y));
+  if(state.deal===n&&to!=="pool") state.deal=null;
+  selected=null; ensureDeal(); save(); render();
+}
+function ensureDeal(avoid){
+  if(state.deal&&state.pool.includes(state.deal))return;
+  const opts=state.pool.filter(n=>n!==avoid), src=opts.length?opts:state.pool;
+  state.deal=src.length?src[Math.floor(Math.random()*src.length)]:null;
+}
+
+/* ---------- build static structure once ---------- */
+const board=document.getElementById("board"), pool=document.getElementById("pool");
+const zones={pool};
+for(const k of TIERS){
+  const row=document.createElement("div"); row.className="row";
+  const tag=document.createElement("div"); tag.className="tag"; tag.textContent=k; tag.style.background=`var(--t${k})`;
+  tag.dataset.zone=k; tag.tabIndex=0; tag.setAttribute("role","button"); tag.setAttribute("aria-label","Tier "+k);
+  const zone=document.createElement("div"); zone.className="zone"; zone.dataset.zone=k;
+  row.append(tag,zone); board.append(row); zones[k]=zone;
+}
+for(const [z,el] of Object.entries(zones)){
+  new Sortable(el,{
+    group:"tiers", animation:150, onStart:()=>{dragging=true}, delay:180, delayOnTouchOnly:true, touchStartThreshold:5,
+    forceFallback:true, fallbackTolerance:3, filter:".empty",
+    onEnd:e=>{
+      dragging=false; lastDrag=Date.now();
+      const n=e.item.dataset.name, to=e.to.dataset.zone;
+      if(!n||!to)return;
+      let nx=e.item.nextElementSibling; while(nx&&!nx.dataset.name) nx=nx.nextElementSibling;
+      move(n,to,nx?nx.dataset.name:null);
+    }
+  });
+}
+
+function cardEl(n){
+  const p=PHOTOS[n], el=document.createElement("div");
+  el.className="card"+(selected===n?" sel":""); el.dataset.name=n; el.tabIndex=0; el.setAttribute("role","button");
+  el.setAttribute("aria-label",n+(selected===n?", selected":""));
+  el.title=n+" · "+CITIES[n]+(p&&p.k==="city"?" · city view, not the city hall":"")+(p&&p.note?" · "+p.note:"");
+  if(p){const img=document.createElement("img"); img.src=p.src; img.alt=""; img.loading="lazy"; img.decoding="async"; img.draggable=false;
+    img.onerror=()=>{img.remove();const i=document.createElement("div");i.className="ini";i.textContent=initials(n);el.prepend(i)}; el.append(img);}
+  else{const i=document.createElement("div");i.className="ini";i.textContent=initials(n);el.append(i)}
+  if(p&&p.k==="city"){const c=document.createElement("span");c.className="cv";c.textContent="City view";el.append(c)}
+  const nm=document.createElement("span"); nm.className="nm"; nm.textContent=n; el.append(nm);
+  return el;
+}
+
+function render(){
+  document.body.classList.toggle("armed",!!selected);
+  for(const k of TIERS){zones[k].replaceChildren(...state.tiers[k].map(cardEl))}
+  const shown=state.pool.filter(n=>filter==="All"||CITIES[n]===filter);
+  pool.replaceChildren(...shown.map(cardEl));
+  if(!shown.length){const e=document.createElement("div");e.className="empty";
+    e.textContent=state.pool.length?"Nothing left to rank in this region. Pick another filter.":"Every city hall is ranked. Drag any tile back here to rethink it.";pool.append(e)}
+  const ranked=ALL.length-state.pool.length;
+  document.getElementById("poolN").textContent=state.pool.length;
+  document.getElementById("rankedN").textContent=ranked;
+  document.getElementById("pct").textContent=Math.round(ranked/ALL.length*100)+"%";
+  document.getElementById("barFill").style.width=(ranked/ALL.length*100)+"%";
+  renderDesk(); renderFilters();
+}
+
+const pick=document.getElementById("pick");
+for(const k of TIERS){const b=document.createElement("button");b.type="button";b.textContent=k;b.style.background=`var(--t${k})`;
+  b.setAttribute("aria-label","Put in tier "+k);b.onclick=()=>{if(state.deal)move(state.deal,k)};pick.append(b)}
+{const s=document.createElement("button");s.type="button";s.className="skip";s.textContent="Skip for now";s.onclick=skip;pick.append(s)}
+
+function renderDesk(){
+  const n=state.deal, p=n&&PHOTOS[n], img=document.getElementById("dealImg"), meta=document.getElementById("dealMeta");
+  document.getElementById("desk").classList.toggle("done",!n);
+  document.getElementById("dealCity").textContent=n||"All 88 ranked";
+  meta.replaceChildren();
+  if(!n){meta.textContent="Rearrange anything on the board, then copy your list to share it.";img.removeAttribute("src");return}
+  if(p){img.src=p.src;img.alt=(p.k==="hall"?n+" City Hall":"View of "+n)}else{img.removeAttribute("src");img.alt=""}
+  const reg=document.createElement("span"); reg.textContent=CITIES[n]; meta.append(reg);
+  if(p&&p.k==="city"){const f=document.createElement("span");f.className="flag";f.textContent="City view, not the city hall";meta.append(f)}
+  if(p&&p.note){const f=document.createElement("span");f.className="flag";f.textContent=p.note;meta.append(f)}
+  const a=document.createElement("a"); a.href=searchURL(n); a.target="_blank"; a.rel="noopener"; a.textContent="Find city hall photos ↗"; meta.append(a);
+}
+function skip(){const cur=state.deal;state.deal=null;ensureDeal(cur);save();renderDesk()}
+
+function renderFilters(){
+  const f=document.getElementById("filters"), counts={};
+  for(const n of state.pool) counts[CITIES[n]]=(counts[CITIES[n]]||0)+1;
+  const mk=(label,color)=>{const b=document.createElement("button");b.type="button";b.setAttribute("aria-pressed",String(filter===label));
+    if(color){const d=document.createElement("span");d.className="dot";d.style.background=color;b.append(d)}
+    b.append(label+(label==="All"?"":" "+(counts[label]||0)));b.onclick=()=>{filter=label;render()};return b};
+  f.replaceChildren(mk("All"),...Object.entries(REGIONS).map(([r,c])=>mk(r,c)));
+}
+
+/* ---------- tap to select, tap to place ---------- */
+document.addEventListener("click",e=>{
+  if(dragging||Date.now()-lastDrag<350)return;
+  const card=e.target.closest(".card"), z=e.target.closest("[data-zone]");
+  if(card){
+    const n=card.dataset.name;
+    if(selected&&selected!==n&&!(where(n)==="pool"&&where(selected)==="pool")){move(selected,where(n),n);return}
+    selected=selected===n?null:n; render();
+    toast(selected?`${selected} selected. Tap a tier to place it.`:""); return;
+  }
+  if(z&&selected){move(selected,z.dataset.zone);toast("")}
+});
+document.addEventListener("keydown",e=>{
+  if((e.key==="Enter"||e.key===" ")&&e.target.matches(".card,.tag")){e.preventDefault();e.target.click()}
+  if(e.key==="Escape"&&selected){selected=null;render()}
+});
+
+/* ---------- toolbar ---------- */
+let toastT;
+function toast(m){const t=document.getElementById("toast");t.textContent=m;clearTimeout(toastT);if(m)toastT=setTimeout(()=>t.textContent="",4000)}
+function asText(){const L=["My LA County City Hall Tier List"];for(const k of TIERS)L.push(`${k}: ${state.tiers[k].join(", ")||"—"}`);
+  if(state.pool.length)L.push(`Unranked (${state.pool.length}): ${state.pool.join(", ")}`);L.push(location.href.split("#")[0]);return L.join("\n")}
+document.getElementById("copyBtn").onclick=async()=>{const txt=asText(),out=document.getElementById("copyOut");
+  try{await navigator.clipboard.writeText(txt);out.hidden=true;toast("Copied. Paste it anywhere.")}
+  catch(e){out.value=txt;out.hidden=false;out.focus();out.select();toast("Select the text below and copy it.")}};
+document.getElementById("shuffleBtn").onclick=()=>{if(state.pool.length){skip();document.getElementById("desk").scrollIntoView({behavior:"smooth",block:"nearest"})}};
+function wireReset(){
+  const w=document.getElementById("resetWrap");
+  w.innerHTML='<button class="btn danger" type="button">Start over</button>';
+  w.firstChild.onclick=()=>{
+    w.innerHTML='<span class="confirm">Clear all 88 rankings? <button class="btn danger" type="button" data-a="y">Clear</button><button class="btn" type="button" data-a="n">Keep</button></span>';
+    w.querySelector('[data-a="y"]').onclick=()=>{state=fresh();selected=null;filter="All";ensureDeal();save();render();wireReset();toast("Board cleared.")};
+    w.querySelector('[data-a="n"]').onclick=wireReset;
+  };
+}
+wireReset();
+
+/* ---------- credits ---------- */
+document.getElementById("credits").replaceChildren(...ALL.filter(n=>PHOTOS[n]).map(n=>{
+  const p=PHOTOS[n], li=document.createElement("li"), a=document.createElement("a");
+  a.href=p.page; a.target="_blank"; a.rel="noopener"; a.textContent=n+(p.k==="city"?" (city view)":"");
+  li.append(a," — ",(p.by||"Unknown author")+", "+(p.lic||"see file page")); return li;
+}));
+
+state=load()||fresh(); ensureDeal(); render();
+</script>
+</body>
+</html>
