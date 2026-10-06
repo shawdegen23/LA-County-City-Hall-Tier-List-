@@ -30,6 +30,7 @@
   color-scheme:dark;
 }}
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 html,body{margin:0}
 body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.45;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 .wrap{max-width:1180px;margin:0 auto;padding-inline:16px;padding-block:20px 48px;display:flex;flex-direction:column;gap:20px}
@@ -46,9 +47,39 @@ h1 em{font-style:normal;color:var(--gold)}
 .bar i{display:block;height:100%;width:0;background:var(--gold);transition:width .3s ease}
 
 /* Deal desk */
-.desk{background:var(--desk);color:var(--desk-ink);border-radius:14px;padding:16px;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:16px 22px;align-items:center}
-.desk-photo{width:220px;aspect-ratio:4/3;border-radius:10px;overflow:hidden;background:rgba(255,255,255,.08);position:relative;max-width:100%}
-.desk-photo img{width:100%;height:100%;object-fit:cover;display:block}
+.desk{background:var(--desk);color:var(--desk-ink);border-radius:14px;padding:16px;display:grid;grid-template-columns:minmax(0,420px) minmax(0,1fr) auto;gap:16px 22px;align-items:center}
+/* Gallery: horizontal scroll-snap strip */
+.gal{position:relative;border-radius:10px;overflow:hidden;background:rgba(0,0,0,.25);min-width:0}
+.strip{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;scrollbar-width:none;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}
+.strip::-webkit-scrollbar{display:none}
+.slide{flex:0 0 100%;scroll-snap-align:center;scroll-snap-stop:always;position:relative;aspect-ratio:4/3;margin:0}
+.slide>img{width:100%;height:100%;object-fit:cover;display:block;background:rgba(255,255,255,.06) linear-gradient(110deg,transparent 30%,rgba(255,255,255,.08) 50%,transparent 70%)}
+.slide .aer{z-index:0}.slide figcaption{z-index:1;position:absolute;left:0;right:0;bottom:0;padding:22px 10px 8px;font-size:12px;color:#fff;background:linear-gradient(to top,rgba(0,0,0,.8),rgba(0,0,0,0));display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.slide figcaption a{color:#fff}
+.chip{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:2px 6px;border-radius:4px;background:rgba(255,255,255,.22);color:#fff}
+.chip.hall{background:#2e8b57}
+.gal .nav{position:absolute;top:50%;transform:translateY(-50%);width:36px;height:36px;border-radius:50%;border:0;background:rgba(0,0,0,.55);color:#fff;font-size:20px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.gal .nav:disabled{opacity:0;pointer-events:none}
+.gal .prev{left:8px}.gal .next{right:8px}
+.dots{position:absolute;top:8px;right:8px;display:flex;gap:5px;padding:4px 6px;border-radius:999px;background:rgba(0,0,0,.45)}
+.dots i{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.45)}
+.dots i.on{background:#fff}
+@media (hover:none){.gal .nav{display:none}}
+/* Viewer */
+.viewer{position:fixed;inset:0;z-index:60;background:rgba(5,10,15,.88);display:flex;align-items:center;justify-content:center;padding:16px;padding-top:max(16px,env(safe-area-inset-top));padding-bottom:max(16px,env(safe-area-inset-bottom))}
+.viewer .box{width:min(860px,100%);display:flex;flex-direction:column;gap:10px;color:#fff}
+.viewer .vh{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.viewer h3{margin:0;font-family:var(--display);font-weight:900;font-size:30px;text-transform:uppercase;line-height:1}
+.viewer .x{border:0;background:rgba(255,255,255,.15);color:#fff;border-radius:8px;padding:8px 12px;font:600 13px var(--body);cursor:pointer}
+.viewer .slide{aspect-ratio:3/2}
+.viewer .slide>img{object-fit:contain;background:#000}
+.aer{position:absolute;inset:0;overflow:hidden;background:#3b4a3a}
+.aer-in{position:absolute;left:50%;top:50%;transform-origin:0 0}
+.aer-in img{position:absolute;width:256px;height:256px;max-width:none;object-fit:fill;background:none}
+.aer .pin{position:absolute;left:50%;top:50%;width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 2px rgba(0,0,0,.45),0 0 0 9px rgba(255,255,255,.18)}
+.card .aer .pin{width:8px;height:8px;margin:-4px 0 0 -4px;box-shadow:0 0 0 1px rgba(0,0,0,.45)}
+.card .zoom{position:absolute;top:3px;right:3px;width:22px;height:22px;border-radius:5px;border:0;background:rgba(0,0,0,.55);color:#fff;font-size:13px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
+.card .cnt{position:absolute;top:4px;left:4px;font-family:var(--mono);font-size:9px;background:rgba(0,0,0,.6);color:#fff;padding:1px 4px;border-radius:3px}
 .desk .lbl{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;opacity:.75}
 .desk .city{font-family:var(--display);font-weight:900;text-transform:uppercase;font-size:clamp(32px,5.4vw,52px);line-height:.95;margin:4px 0 8px;overflow-wrap:anywhere}
 .desk .meta{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;font-size:13px}
@@ -59,9 +90,8 @@ h1 em{font-style:normal;color:var(--gold)}
 .pick button:hover{transform:translateY(-2px)}
 .pick .skip{grid-column:1/-1;height:34px;font-family:var(--body);font-size:13px;font-weight:600;background:transparent;color:inherit;border:1px solid currentColor;opacity:.85}
 .desk.done{grid-template-columns:minmax(0,1fr)}
-.desk.done .desk-photo,.desk.done .pick{display:none}
-@media (max-width:820px){.desk{grid-template-columns:auto minmax(0,1fr)}.pick{grid-column:1/-1;grid-template-columns:repeat(6,minmax(0,1fr))}}
-@media (max-width:520px){.desk{grid-template-columns:minmax(0,1fr)}.desk-photo{width:100%}}
+.desk.done .gal,.desk.done .pick{display:none}
+@media (max-width:900px){.desk{grid-template-columns:minmax(0,1fr)}.pick{grid-template-columns:repeat(6,minmax(0,1fr))}}
 
 /* Board */
 .board{border-radius:12px;overflow:hidden;border:1px solid var(--line);background:var(--panel)}
@@ -126,7 +156,7 @@ details summary{cursor:pointer}
   </header>
 
   <section class="desk" id="desk" aria-label="Next city hall">
-    <div class="desk-photo"><img id="dealImg" alt="" onerror="this.removeAttribute('src')"></div>
+    <div class="gal" id="dealGal"></div>
     <div>
       <div class="lbl">Now judging</div>
       <div class="city" id="dealCity">—</div>
@@ -142,7 +172,7 @@ details summary{cursor:pointer}
       <h2>Unranked <span id="poolN">88</span></h2>
       <div class="filters" id="filters"></div>
     </div>
-    <p class="hint">Drag a city hall onto a tier. On a phone, press and hold a tile for a moment, then drag. You can also tap a tile, then tap a tier.</p>
+    <p class="hint">Drag a city hall onto a tier. On a phone, press and hold a tile for a moment, then drag. You can also tap a tile, then tap a tier. Tap ⤢ on a tile to flip through all its photos.</p>
     <div class="zone" id="pool" data-zone="pool"></div>
   </section>
 
@@ -155,13 +185,14 @@ details summary{cursor:pointer}
   <textarea class="copyout" id="copyOut" hidden readonly aria-label="Your tier list as text"></textarea>
 
   <footer>
-    <span>Rankings save in this browser. Tiles marked “City view” show the city because no free photo of its city hall was available; use “Find city hall photos” on the deal card to see the building.</span>
+    <span>Rankings save in this browser. Swipe through each city's photos: street-level shots of the city hall where a free photo exists, an aerial view of the actual building for every city, and a Street View link to look around.</span>
     <details><summary>Photo credits (Wikimedia Commons)</summary><ul class="credits" id="credits"></ul></details>
   </footer>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.2/Sortable.min.js"></script>
 <script src="photos.js"></script>
+<div class="viewer" id="viewer" hidden role="dialog" aria-modal="true" aria-labelledby="vTitle"><div class="box"><div class="vh"><h3 id="vTitle"></h3><button class="x" id="vClose" type="button">Close</button></div><div class="gal" id="vGal"></div></div></div>
 <script>
 const TIERS=["S","A","B","C","D","F"];
 const REGIONS={
@@ -179,7 +210,23 @@ const R={
   "City of LA":"Los Angeles",
   "Catalina":"Avalon"
 };
-const PHOTOS=window.PHOTOS||{};
+const DATA=window.CITYHALLS||{};
+const aerialURL=(lat,lon,w,h)=>{const dy=0.00085,dx=dy*(w/h)/Math.cos(lat*Math.PI/180);
+  return `https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/export?bbox=${(lon-dx).toFixed(5)},${(lat-dy).toFixed(5)},${(lon+dx).toFixed(5)},${(lat+dy).toFixed(5)}&bboxSR=4326&imageSR=3857&size=${w},${h}&format=jpg&f=image`};
+const svURL=(lat,lon)=>`https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${lat},${lon}`;
+const slideSrc=(s)=>s.src;
+/* Aerial view stitched from Esri's cached World Imagery tiles, centered on the city hall */
+function aerialEl(lat,lon,z,view,scale,eager){
+  const n=2**z, px=(lon+180)/360*n*256, s=Math.sin(lat*Math.PI/180), py=(0.5-Math.log((1+s)/(1-s))/(4*Math.PI))*n*256;
+  const half=view/2, x0=Math.floor((px-half)/256), x1=Math.floor((px+half)/256), y0=Math.floor((py-half)/256), y1=Math.floor((py+half)/256);
+  const box=document.createElement("div"); box.className="aer";
+  const inner=document.createElement("div"); inner.className="aer-in";
+  inner.style.transform=`scale(${scale}) translate(${-(px-x0*256)}px,${-(py-y0*256)}px)`;
+  for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++){const t=document.createElement("img");t.alt="";t.draggable=false;t.decoding="async";t.loading=eager?"eager":"lazy";
+    t.src=`https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/${z}/${y}/${x}`;t.style.left=(x-x0)*256+"px";t.style.top=(y-y0)*256+"px";inner.append(t)}
+  const pin=document.createElement("span");pin.className="pin";box.append(inner,pin);return box;
+}
+const slidesOf=n=>(DATA[n]&&DATA[n].slides)||[];
 const CITIES={};
 for(const [reg,list] of Object.entries(R)) for(const n of list.split(",")) CITIES[n]=reg;
 const ALL=Object.keys(CITIES).sort((a,b)=>a.localeCompare(b));
@@ -222,7 +269,7 @@ for(const k of TIERS){
 for(const [z,el] of Object.entries(zones)){
   new Sortable(el,{
     group:"tiers", animation:150, onStart:()=>{dragging=true}, delay:180, delayOnTouchOnly:true, touchStartThreshold:5,
-    forceFallback:true, fallbackTolerance:3, filter:".empty",
+    forceFallback:true, fallbackTolerance:3, filter:".empty,.zoom", preventOnFilter:false,
     onEnd:e=>{
       dragging=false; lastDrag=Date.now();
       const n=e.item.dataset.name, to=e.to.dataset.zone;
@@ -234,17 +281,59 @@ for(const [z,el] of Object.entries(zones)){
 }
 
 function cardEl(n){
-  const p=PHOTOS[n], el=document.createElement("div");
+  const sl=slidesOf(n), first=sl[0], halls=sl.filter(x=>x.t==="hall").length, el=document.createElement("div");
   el.className="card"+(selected===n?" sel":""); el.dataset.name=n; el.tabIndex=0; el.setAttribute("role","button");
   el.setAttribute("aria-label",n+(selected===n?", selected":""));
-  el.title=n+" · "+CITIES[n]+(p&&p.k==="city"?" · city view, not the city hall":"")+(p&&p.note?" · "+p.note:"");
-  if(p){const img=document.createElement("img"); img.src=p.src; img.alt=""; img.loading="lazy"; img.decoding="async"; img.draggable=false;
+  el.title=n+" · "+CITIES[n]+(first&&first.t==="aerial"?" · aerial view of city hall":"");
+  if(first&&first.t==="aerial"){el.append(aerialEl(first.lat,first.lon,18,180,0.55))}
+  else if(first){const img=document.createElement("img"); img.src=slideSrc(first); img.alt=""; img.loading="lazy"; img.decoding="async"; img.draggable=false;
     img.onerror=()=>{img.remove();const i=document.createElement("div");i.className="ini";i.textContent=initials(n);el.prepend(i)}; el.append(img);}
   else{const i=document.createElement("div");i.className="ini";i.textContent=initials(n);el.append(i)}
-  if(p&&p.k==="city"){const c=document.createElement("span");c.className="cv";c.textContent="City view";el.append(c)}
+  if(first&&first.t==="aerial"){const c=document.createElement("span");c.className="cv";c.textContent="Aerial";el.append(c)}
+  else if(sl.length>1){const c=document.createElement("span");c.className="cnt";c.textContent=sl.length+" views";el.append(c)}
+  const z=document.createElement("button"); z.type="button"; z.className="zoom"; z.textContent="⤢"; z.setAttribute("aria-label","View photos of "+n); z.dataset.view=n; el.append(z);
   const nm=document.createElement("span"); nm.className="nm"; nm.textContent=n; el.append(nm);
   return el;
 }
+
+/* ---------- gallery (scroll-snap strip) ---------- */
+function gallery(host,n,big){
+  const sl=slidesOf(n); host.replaceChildren();
+  const strip=document.createElement("div"); strip.className="strip"; strip.tabIndex=0; strip.setAttribute("aria-label",n+" photos");
+  sl.forEach((x,i)=>{
+    const f=document.createElement("figure"); f.className="slide";
+    let img;
+    if(x.t==="aerial"){img=aerialEl(x.lat,x.lon,18,big?1000:700,1,true);img.setAttribute("role","img");img.setAttribute("aria-label","Aerial view of "+n+" City Hall")}
+    else{img=document.createElement("img"); img.src=x.src; img.loading=i<2?"eager":"lazy"; img.decoding="async"; img.draggable=false;
+    img.alt=x.t==="hall"?n+" City Hall":"View of "+n;}
+    const cap=document.createElement("figcaption"), chip=document.createElement("span");
+    chip.className="chip"+(x.t==="hall"?" hall":""); chip.textContent=x.t==="hall"?"City hall":x.t==="aerial"?"Aerial · city hall":"City view";
+    cap.append(chip);
+    if(x.note){const c=document.createElement("span");c.className="chip";c.textContent=x.note;cap.append(c)}
+    if(x.t==="aerial"){const l=document.createElement("a");l.href=svURL(x.lat,x.lon);l.target="_blank";l.rel="noopener";l.textContent="Street View ↗";cap.append(l)}
+    if(x.t==="city"){const s2=document.createElement("span");s2.textContent="Not the city hall";cap.append(s2)}
+    f.append(img,cap); strip.append(f);
+  });
+  host.append(strip);
+  if(sl.length>1){
+    const prev=document.createElement("button"),next=document.createElement("button"),dots=document.createElement("div");
+    prev.className="nav prev";prev.type="button";prev.textContent="‹";prev.setAttribute("aria-label","Previous photo");
+    next.className="nav next";next.type="button";next.textContent="›";next.setAttribute("aria-label","Next photo");
+    dots.className="dots"; sl.forEach(()=>dots.append(document.createElement("i")));
+    const idx=()=>strip.clientWidth?Math.round(strip.scrollLeft/strip.clientWidth):0;
+    const upd=()=>{const i=idx();[...dots.children].forEach((d,j)=>d.classList.toggle("on",j===i));prev.disabled=i<=0;next.disabled=i>=sl.length-1};
+    prev.onclick=e=>{e.stopPropagation();strip.scrollTo({left:(idx()-1)*strip.clientWidth})};
+    next.onclick=e=>{e.stopPropagation();strip.scrollTo({left:(idx()+1)*strip.clientWidth})};
+    strip.addEventListener("scroll",()=>requestAnimationFrame(upd),{passive:true});
+    strip.addEventListener("keydown",e=>{if(e.key==="ArrowRight"){e.preventDefault();next.click()}if(e.key==="ArrowLeft"){e.preventDefault();prev.click()}});
+    host.append(prev,next,dots); upd(); requestAnimationFrame(upd); new ResizeObserver(upd).observe(strip);
+  }
+}
+const viewer=document.getElementById("viewer");
+function openViewer(n){document.getElementById("vTitle").textContent=n+" City Hall";gallery(document.getElementById("vGal"),n,true);viewer.hidden=false;document.getElementById("vClose").focus()}
+function closeViewer(){viewer.hidden=true;document.getElementById("vGal").replaceChildren()}
+document.getElementById("vClose").onclick=closeViewer;
+viewer.addEventListener("click",e=>{if(e.target===viewer)closeViewer()});
 
 function render(){
   document.body.classList.toggle("armed",!!selected);
@@ -266,17 +355,18 @@ for(const k of TIERS){const b=document.createElement("button");b.type="button";b
   b.setAttribute("aria-label","Put in tier "+k);b.onclick=()=>{if(state.deal)move(state.deal,k)};pick.append(b)}
 {const s=document.createElement("button");s.type="button";s.className="skip";s.textContent="Skip for now";s.onclick=skip;pick.append(s)}
 
+let galFor=null;
 function renderDesk(){
-  const n=state.deal, p=n&&PHOTOS[n], img=document.getElementById("dealImg"), meta=document.getElementById("dealMeta");
+  const n=state.deal, meta=document.getElementById("dealMeta");
   document.getElementById("desk").classList.toggle("done",!n);
   document.getElementById("dealCity").textContent=n||"All 88 ranked";
   meta.replaceChildren();
-  if(!n){meta.textContent="Rearrange anything on the board, then copy your list to share it.";img.removeAttribute("src");return}
-  if(p){img.src=p.src;img.alt=(p.k==="hall"?n+" City Hall":"View of "+n)}else{img.removeAttribute("src");img.alt=""}
+  if(!n){meta.textContent="Rearrange anything on the board, then copy your list to share it.";galFor=null;document.getElementById("dealGal").replaceChildren();return}
+  if(galFor!==n){gallery(document.getElementById("dealGal"),n,false);galFor=n}
+  const sl=slidesOf(n), halls=sl.filter(x=>x.t==="hall").length;
   const reg=document.createElement("span"); reg.textContent=CITIES[n]; meta.append(reg);
-  if(p&&p.k==="city"){const f=document.createElement("span");f.className="flag";f.textContent="City view, not the city hall";meta.append(f)}
-  if(p&&p.note){const f=document.createElement("span");f.className="flag";f.textContent=p.note;meta.append(f)}
-  const a=document.createElement("a"); a.href=searchURL(n); a.target="_blank"; a.rel="noopener"; a.textContent="Find city hall photos ↗"; meta.append(a);
+  const c=document.createElement("span"); c.className="flag"; c.textContent=sl.length+(sl.length===1?" view":" views")+(halls?"":" · aerial only"); meta.append(c);
+  const a=document.createElement("a"); a.href=searchURL(n); a.target="_blank"; a.rel="noopener"; a.textContent="More photos ↗"; meta.append(a);
 }
 function skip(){const cur=state.deal;state.deal=null;ensureDeal(cur);save();renderDesk()}
 
@@ -292,6 +382,8 @@ function renderFilters(){
 /* ---------- tap to select, tap to place ---------- */
 document.addEventListener("click",e=>{
   if(dragging||Date.now()-lastDrag<350)return;
+  const zb=e.target.closest(".zoom"); if(zb){e.stopPropagation();openViewer(zb.dataset.view);return}
+  if(e.target.closest("#viewer"))return;
   const card=e.target.closest(".card"), z=e.target.closest("[data-zone]");
   if(card){
     const n=card.dataset.name;
@@ -302,7 +394,8 @@ document.addEventListener("click",e=>{
   if(z&&selected){move(selected,z.dataset.zone);toast("")}
 });
 document.addEventListener("keydown",e=>{
-  if((e.key==="Enter"||e.key===" ")&&e.target.matches(".card,.tag")){e.preventDefault();e.target.click()}
+  if((e.key==="Enter"||e.key===" ")&&e.target.matches(".card,.tag")&&!e.target.matches(".zoom")){e.preventDefault();e.target.click()}
+  if(e.key==="Escape"&&!viewer.hidden){closeViewer();return}
   if(e.key==="Escape"&&selected){selected=null;render()}
 });
 
@@ -327,11 +420,12 @@ function wireReset(){
 wireReset();
 
 /* ---------- credits ---------- */
-document.getElementById("credits").replaceChildren(...ALL.filter(n=>PHOTOS[n]).map(n=>{
-  const p=PHOTOS[n], li=document.createElement("li"), a=document.createElement("a");
-  a.href=p.page; a.target="_blank"; a.rel="noopener"; a.textContent=n+(p.k==="city"?" (city view)":"");
-  li.append(a," — ",(p.by||"Unknown author")+", "+(p.lic||"see file page")); return li;
-}));
+{const items=[];
+ for(const n of ALL) for(const x of slidesOf(n)) if(x.t!=="aerial"){
+   const li=document.createElement("li"),a=document.createElement("a");a.href=x.page;a.target="_blank";a.rel="noopener";
+   a.textContent=n+(x.t==="city"?" (city view)":x.note?" ("+x.note+")":"");li.append(a," — ",(x.by||"Unknown author")+", "+(x.lic||"see file page"));items.push(li)}
+ const li=document.createElement("li");li.textContent="Aerial views — Esri World Imagery (Esri, Maxar, Earthstar Geographics, and the GIS User Community). City hall locations — © OpenStreetMap contributors.";items.unshift(li);
+ document.getElementById("credits").replaceChildren(...items);}
 
 state=load()||fresh(); ensureDeal(); render();
 </script>
